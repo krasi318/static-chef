@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Gallery - Static Chef</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel Standalone for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        /* Custom hover effects */
+        .recipe-card {
+            transition: all 0.3s ease;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .recipe-image {
+            transition: transform 0.5s ease;
+        }
+
+        .recipe-card:hover .recipe-image {
+            transform: scale(1.1);
+        }
+
+        .category-btn {
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .category-btn.active {
+            background-color: #d97706;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="index.html" class="text-2xl font-bold text-gray-800 hover:text-amber-600 transition-colors">
+                    &lt; Static Chef /&gt;
+                </a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html#about" class="text-gray-700 hover:text-amber-600 transition-colors">За мен</a>
+                    <a href="menu.html" class="text-amber-600 font-semibold">Моите рецепти</a>
+                    <a href="index.html#portfolio" class="text-gray-700 hover:text-amber-600 transition-colors">Вашите рецепти</a>
+                    <a href="index.html#contact" class="text-gray-700 hover:text-amber-600 transition-colors">Контакт</a>
+                </div>
+                <!-- Mobile menu button -->
+                <button class="md:hidden text-gray-700 hover:text-amber-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content with padding for fixed nav -->
+    <div class="pt-20">
+        <!-- Recipe Gallery Component will be rendered here -->
+        <div id="recipe-gallery-root"></div>
+        </div>
+
+    <!-- RecipeGallery JSX Component -->
+    <script type="text/babel">
+        const { useState, useMemo, useEffect, useRef } = React;
+
+        // Animated Tablecloth Background Component
+        const AnimatedTableclothBackground = () => {
+            const canvasRef = useRef(null);
+            const animationRef = useRef(null);
+            const mouseRef = useRef({ x: 0, y: 0 });
+            const timeRef = useRef(0);
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+
+                const ctx = canvas.getContext('2d');
+                let animationId;
+
+                // Set canvas size
+                const resizeCanvas = () => {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                };
+
+                // Mouse move handler
+                const handleMouseMove = (e) => {
+                    mouseRef.current.x = e.clientX;
+                    mouseRef.current.y = e.clientY;
+                };
+
+                // Animation loop
+                const animate = () => {
+                    timeRef.current += 0.01;
+                    
+                    const width = canvas.width;
+                    const height = canvas.height;
+                    const time = timeRef.current;
+                    
+                    // Clear canvas
+                    ctx.clearRect(0, 0, width, height);
+                    
+                    // Grid parameters
+                    const gridSize = 40;
+                    const mouseX = mouseRef.current.x;
+                    const mouseY = mouseRef.current.y;
+                    
+                    // Create gradient for medium colors
+                    const gradient = ctx.createLinearGradient(0, 0, width, height);
+                    gradient.addColorStop(0, '#d2b48c'); // Tan
+                    gradient.addColorStop(0.5, '#deb887'); // Burlywood
+                    gradient.addColorStop(1, '#d2b48c'); // Tan
+                    
+                    // Draw grid pattern with wave animation
+                    for (let x = 0; x < width + gridSize; x += gridSize) {
+                        for (let y = 0; y < height + gridSize; y += gridSize) {
+                            // Calculate distance from mouse
+                            const dx = x - mouseX;
+                            const dy = y - mouseY;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            // Wave effect based on distance and time
+                            const wave = Math.sin((x * 0.01) + (y * 0.01) + time) * 0.3;
+                            const mouseWave = Math.sin(distance * 0.005 - time * 2) * 0.2;
+                            const totalWave = wave + mouseWave;
+                            
+                            // Offset position based on waves
+                            const offsetX = x + totalWave * 8;
+                            const offsetY = y + totalWave * 6;
+                            
+                            // Determine if this should be a dark square
+                            const gridX = Math.floor(offsetX / gridSize);
+                            const gridY = Math.floor(offsetY / gridSize);
+                            const isDark = (gridX + gridY) % 2 === 0;
+                            
+                            // Color with subtle variation
+                            const colorVariation = Math.sin((x + y) * 0.1 + time) * 0.1;
+                            const baseColor = isDark ? '#cd853f' : '#d2b48c';
+                            
+                            // Apply mouse proximity effect
+                            const mouseEffect = Math.max(0, 1 - distance / 180);
+                            const finalColor = isDark ? 
+                                `rgba(205, 133, 63, ${0.35 + mouseEffect * 0.25})` : 
+                                `rgba(210, 180, 140, ${0.25 + mouseEffect * 0.15})`;
+                            
+                            ctx.fillStyle = finalColor;
+                            ctx.fillRect(x, y, gridSize, gridSize);
+                            
+                            // Add subtle border
+                            ctx.strokeStyle = `rgba(188, 143, 143, ${0.15 + mouseEffect * 0.15})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.strokeRect(x, y, gridSize, gridSize);
+                        }
+                    }
+                    
+                    // Add floating particles for extra animation
+                    for (let i = 0; i < 20; i++) {
+                        const particleX = (Math.sin(time + i) * 0.5 + 0.5) * width;
+                        const particleY = (Math.cos(time * 0.7 + i) * 0.5 + 0.5) * height;
+                        const size = Math.sin(time * 2 + i) * 2 + 3;
+                        
+                        ctx.fillStyle = `rgba(255, 218, 185, ${0.12 + Math.sin(time + i) * 0.08})`;
+                        ctx.beginPath();
+                        ctx.arc(particleX, particleY, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    
+                    animationId = requestAnimationFrame(animate);
+                };
+
+                // Initialize
+                resizeCanvas();
+                animate();
+                
+                // Event listeners
+                window.addEventListener('resize', resizeCanvas);
+                window.addEventListener('mousemove', handleMouseMove);
+                
+                // Cleanup
+                return () => {
+                    window.removeEventListener('resize', resizeCanvas);
+                    window.removeEventListener('mousemove', handleMouseMove);
+                    if (animationId) {
+                        cancelAnimationFrame(animationId);
+                    }
+                };
+            }, []);
+
+            return (
+                <canvas
+                    ref={canvasRef}
+                    className="fixed inset-0 w-full h-full -z-10"
+                    style={{ opacity: 0.5 }}
+                />
+            );
+        };
+
+        const RecipeGallery = () => {
+            const [selectedCategory, setSelectedCategory] = useState('All');
+            const [searchQuery, setSearchQuery] = useState('');
+
+        // Dummy recipe data
+        const recipes = [
+            {
+                id: 1,
+                    title: "Grandma's Apple Pie",
+                    category: "Dessert",
+                    prepTime: "45 min",
+                    image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 2,
+                    title: "Cozy Chicken Soup",
+                    category: "Soups",
+                    prepTime: "30 min",
+                    image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 3,
+                    title: "Homemade Pasta",
+                    category: "Pasta",
+                    prepTime: "60 min",
+                    image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    isPrivate: true
+            },
+            {
+                id: 4,
+                    title: "Chocolate Chip Cookies",
+                    category: "Dessert",
+                    prepTime: "25 min",
+                    image: "https://images.unsplash.com/photo-1499636136210-6f4ee6a87fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    isPrivate: false
+            },
+            {
+                id: 5,
+                    title: "Mediterranean Salad",
+                    category: "Appetizers",
+                    prepTime: "15 min",
+                    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 6,
+                    title: "Beef Stew",
+                    category: "Soups",
+                    prepTime: "90 min",
+                image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 7,
+                    title: "Turkey Sandwich",
+                    category: "Sandwiches",
+                    prepTime: "10 min",
+                    image: "https://images.unsplash.com/photo-1539252554453-80ab65ce3586?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 8,
+                    title: "Roasted Turkey",
+                    category: "Thanksgiving",
+                    prepTime: "180 min",
+                    image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: true
+            },
+            {
+                id: 9,
+                    title: "Spaghetti Carbonara",
+                    category: "Pasta",
+                    prepTime: "35 min",
+                    image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            }
+        ];
+
+            const categories = ['All', 'Appetizers', 'Pasta', 'Soups', 'Sandwiches', 'Dessert', 'Thanksgiving'];
+
+            // Filter recipes based on category and search query
+            const filteredRecipes = useMemo(() => {
+                return recipes.filter(recipe => {
+                    const matchesCategory = selectedCategory === 'All' || recipe.category === selectedCategory;
+                    const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                });
+            }, [selectedCategory, searchQuery]);
+
+            return (
+                <div className="min-h-screen relative overflow-hidden">
+                    {/* Main Content */}
+                    <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
+                        {/* Header */}
+                        <div className="text-center mb-12">
+                            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                                Рецептите:
+                            </h1>
+                            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                                Тук ще откриеш рецепти, които наистина си заслужават — лесни, вкусни и изпитани в моята кухня.                            </p>
+                        </div>
+
+                        {/* Category Filter */}
+                        <div className="flex flex-wrap justify-center gap-2 mb-8">
+                            {categories.map((category) => (
+                                <button
+                                    key={category}
+                                    onClick={() => setSelectedCategory(category)}
+                                    className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
+                                        selectedCategory === category
+                                            ? 'bg-amber-600 text-white shadow-lg'
+                                            : 'bg-white text-gray-700 hover:bg-amber-50 border border-gray-200'
+                                    }`}
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Search Bar */}
+                        <div className="max-w-md mx-auto mb-12">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search recipes..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full px-6 py-4 pl-12 pr-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent shadow-lg"
+                                />
+                                <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Recipe Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {filteredRecipes.map((recipe) => (
+                                <div
+                                    key={recipe.id}
+                                    className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group"
+                                >
+                                    {/* Recipe Image */}
+                                    <div className="relative h-48 overflow-hidden">
+                                        <img
+                                            src={recipe.image}
+                                            alt={recipe.title}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                        {recipe.isPrivate && (
+                                            <div className="absolute top-4 right-4">
+                                                <div className="bg-amber-600 text-white p-2 rounded-full shadow-lg">
+                                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Recipe Content */}
+                                    <div className="p-6">
+                                        <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-amber-600 transition-colors duration-300">
+                                            {recipe.title}
+                                        </h3>
+                                        
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center text-gray-600">
+                                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span className="text-sm font-medium">{recipe.prepTime}</span>
+                                            </div>
+                                            
+                                            <span className="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">
+                                                {recipe.category}
+                                            </span>
+                        </div>
+                    </div>
+                </div>
+                            ))}
+                        </div>
+
+                        {/* No Results Message */}
+                        {filteredRecipes.length === 0 && (
+                            <div className="text-center py-12">
+                                <div className="text-6xl mb-4">🔍</div>
+                                <h3 className="text-2xl font-bold text-gray-600 mb-2">No recipes found</h3>
+                                <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App Component that wraps everything
+        const App = () => {
+            return (
+                <div className="relative">
+                    <AnimatedTableclothBackground />
+                    <RecipeGallery />
+                </div>
+            );
+        };
+
+        // Render the component
+        const root = ReactDOM.createRoot(document.getElementById('recipe-gallery-root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

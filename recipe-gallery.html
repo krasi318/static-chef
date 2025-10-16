@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Gallery - Static Chef</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom tablecloth pattern animation */
+        .tablecloth-pattern {
+            background-image: 
+                linear-gradient(45deg, #f5f5dc 25%, transparent 25%),
+                linear-gradient(-45deg, #f5f5dc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e6e6d4 75%),
+                linear-gradient(-45deg, transparent 75%, #e6e6d4 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            animation: tablecloth-shift 8s ease-in-out infinite;
+        }
+
+        @keyframes tablecloth-shift {
+            0%, 100% { 
+                background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+                opacity: 0.3;
+            }
+            50% { 
+                background-position: 5px 5px, 5px 15px, 15px -5px, -5px 5px;
+                opacity: 0.4;
+            }
+        }
+
+        .tablecloth-pattern:hover {
+            animation-duration: 4s;
+        }
+
+        /* Custom hover effects */
+        .recipe-card {
+            transition: all 0.3s ease;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .recipe-image {
+            transition: transform 0.5s ease;
+        }
+
+        .recipe-card:hover .recipe-image {
+            transform: scale(1.1);
+        }
+
+        .category-btn {
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .category-btn.active {
+            background-color: #d97706;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-hidden">
+    <!-- Animated Tablecloth Background -->
+    <div class="absolute inset-0 opacity-30">
+        <div class="tablecloth-pattern"></div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="relative z-10 max-w-6xl mx-auto px-4 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                Recipe Gallery
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Discover delicious recipes from our collection. Filter by category or search for your favorite dishes.
+            </p>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <button class="category-btn active px-6 py-3 rounded-full font-medium bg-amber-600 text-white shadow-lg" data-category="All">
+                All
+            </button>
+            <button class="category-btn px-6 py-3 rounded-full font-medium bg-white text-gray-700 hover:bg-amber-50 border border-gray-200" data-category="Appetizers">
+                Appetizers
+            </button>
+            <button class="category-btn px-6 py-3 rounded-full font-medium bg-white text-gray-700 hover:bg-amber-50 border border-gray-200" data-category="Pasta">
+                Pasta
+            </button>
+            <button class="category-btn px-6 py-3 rounded-full font-medium bg-white text-gray-700 hover:bg-amber-50 border border-gray-200" data-category="Soups">
+                Soups
+            </button>
+            <button class="category-btn px-6 py-3 rounded-full font-medium bg-white text-gray-700 hover:bg-amber-50 border border-gray-200" data-category="Sandwiches">
+                Sandwiches
+            </button>
+            <button class="category-btn px-6 py-3 rounded-full font-medium bg-white text-gray-700 hover:bg-amber-50 border border-gray-200" data-category="Dessert">
+                Dessert
+            </button>
+            <button class="category-btn px-6 py-3 rounded-full font-medium bg-white text-gray-700 hover:bg-amber-50 border border-gray-200" data-category="Thanksgiving">
+                Thanksgiving
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="max-w-md mx-auto mb-12">
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Search recipes..." 
+                    class="w-full px-6 py-4 pl-12 pr-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent shadow-lg"
+                />
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipe Grid -->
+        <div id="recipeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Recipe cards will be dynamically inserted here -->
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="text-center py-12 hidden">
+            <div class="text-6xl mb-4">🔍</div>
+            <h3 class="text-2xl font-bold text-gray-600 mb-2">No recipes found</h3>
+            <p class="text-gray-500">Try adjusting your search or filter criteria</p>
+        </div>
+    </div>
+
+    <script>
+        // Recipe data
+        const recipes = [
+            {
+                id: 1,
+                title: "Grandma's Apple Pie",
+                category: "Dessert",
+                prepTime: "45 min",
+                image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 2,
+                title: "Cozy Chicken Soup",
+                category: "Soups",
+                prepTime: "30 min",
+                image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 3,
+                title: "Homemade Pasta",
+                category: "Pasta",
+                prepTime: "60 min",
+                image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: true
+            },
+            {
+                id: 4,
+                title: "Chocolate Chip Cookies",
+                category: "Dessert",
+                prepTime: "25 min",
+                image: "https://images.unsplash.com/photo-1499636136210-6f4ee6a87fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 5,
+                title: "Mediterranean Salad",
+                category: "Appetizers",
+                prepTime: "15 min",
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 6,
+                title: "Beef Stew",
+                category: "Soups",
+                prepTime: "90 min",
+                image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 7,
+                title: "Turkey Sandwich",
+                category: "Sandwiches",
+                prepTime: "10 min",
+                image: "https://images.unsplash.com/photo-1539252554453-80ab65ce3586?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            },
+            {
+                id: 8,
+                title: "Roasted Turkey",
+                category: "Thanksgiving",
+                prepTime: "180 min",
+                image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: true
+            },
+            {
+                id: 9,
+                title: "Spaghetti Carbonara",
+                category: "Pasta",
+                prepTime: "35 min",
+                image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                isPrivate: false
+            }
+        ];
+
+        let currentCategory = 'All';
+        let currentSearchQuery = '';
+
+        // Initialize the gallery
+        function initRecipeGallery() {
+            renderRecipes();
+            setupEventListeners();
+        }
+
+        // Render recipe cards
+        function renderRecipes() {
+            const recipeGrid = document.getElementById('recipeGrid');
+            const noResults = document.getElementById('noResults');
+            
+            const filteredRecipes = recipes.filter(recipe => {
+                const matchesCategory = currentCategory === 'All' || recipe.category === currentCategory;
+                const matchesSearch = recipe.title.toLowerCase().includes(currentSearchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filteredRecipes.length === 0) {
+                recipeGrid.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            
+            recipeGrid.innerHTML = filteredRecipes.map(recipe => `
+                <div class="recipe-card bg-white rounded-2xl shadow-lg overflow-hidden group">
+                    <!-- Recipe Image -->
+                    <div class="relative h-48 overflow-hidden">
+                        <img 
+                            src="${recipe.image}" 
+                            alt="${recipe.title}" 
+                            class="recipe-image w-full h-full object-cover"
+                        />
+                        ${recipe.isPrivate ? `
+                            <div class="absolute top-4 right-4">
+                                <div class="bg-amber-600 text-white p-2 rounded-full shadow-lg">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Recipe Content -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-amber-600 transition-colors duration-300">
+                            ${recipe.title}
+                        </h3>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="text-sm font-medium">${recipe.prepTime}</span>
+                            </div>
+                            
+                            <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">
+                                ${recipe.category}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Category filter buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.category-btn').forEach(b => {
+                        b.classList.remove('active');
+                        b.classList.add('bg-white', 'text-gray-700', 'hover:bg-amber-50', 'border', 'border-gray-200');
+                        b.classList.remove('bg-amber-600', 'text-white', 'shadow-lg');
+                    });
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    btn.classList.remove('bg-white', 'text-gray-700', 'hover:bg-amber-50', 'border', 'border-gray-200');
+                    btn.classList.add('bg-amber-600', 'text-white', 'shadow-lg');
+                    
+                    currentCategory = btn.dataset.category;
+                    renderRecipes();
+                });
+            });
+
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                currentSearchQuery = e.target.value;
+                renderRecipes();
+            });
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initRecipeGallery);
+    </script>
+</body>
+</html>
