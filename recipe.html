@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe • Static Chef</title>
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tablecloth-bg {
+            background-image:
+                linear-gradient(45deg, #f5f5dc 25%, transparent 25%),
+                linear-gradient(-45deg, #f5f5dc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e6e6d4 75%),
+                linear-gradient(-45deg, transparent 75%, #e6e6d4 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+    </style>
+    <script>
+        async function loadRecipe() {
+            const params = new URLSearchParams(window.location.search);
+            const idParam = params.get('id');
+            const container = document.getElementById('recipeContainer');
+
+            if (!idParam) {
+                container.innerHTML = `<div class="text-center py-24">
+                    <h1 class="text-3xl font-bold text-gray-700 mb-2">Recipe not found</h1>
+                    <p class="text-gray-500">Missing recipe ID.</p>
+                </div>`;
+                return;
+            }
+
+            let recipes = [];
+            try {
+                const res = await fetch('assets/recipes.json', { cache: 'no-store' });
+                if (res.ok) {
+                    recipes = await res.json();
+                }
+            } catch (e) {
+                console.error('Failed to load recipes.json', e);
+            }
+
+            // Fallback: try localStorage under key 'recipes'
+            if (!Array.isArray(recipes) || recipes.length === 0) {
+                try {
+                    const ls = localStorage.getItem('recipes');
+                    if (ls) recipes = JSON.parse(ls);
+                } catch {}
+            }
+
+            const recipeId = parseInt(idParam, 10);
+            const recipe = Array.isArray(recipes) ? recipes.find(r => Number(r.id) === recipeId) : null;
+
+            if (!recipe) {
+                container.innerHTML = `<div class="text-center py-24">
+                    <h1 class="text-3xl font-bold text-gray-700 mb-2">Recipe not found</h1>
+                    <p class="text-gray-500">We couldn't find a recipe with ID ${idParam}.</p>
+                    <a href="menu.html" class="inline-block mt-6 px-6 py-3 rounded-full bg-amber-600 text-white hover:bg-amber-700">Back to recipes</a>
+                </div>`;
+                return;
+            }
+
+            document.title = recipe.title + ' • Static Chef';
+
+            container.innerHTML = `
+                <div class="max-w-5xl mx-auto">
+                    <a href="menu.html" class="inline-flex items-center text-amber-700 hover:text-amber-800 mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        Back to recipes
+                    </a>
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <div class="h-72 md:h-96 w-full overflow-hidden">
+                            <img src="${recipe.image}" alt="${recipe.title}" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="p-6 md:p-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">${recipe.title}</h1>
+                                <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">${recipe.category ?? ''}</span>
+                            </div>
+                            <div class="flex items-center text-gray-600 mb-8">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="text-sm font-medium">${recipe.prepTime ?? ''}</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Ingredients</h2>
+                                    <ul class="list-disc list-inside space-y-2 text-gray-700">${(recipe.ingredients || []).map(i => `<li>${i}</li>`).join('')}</ul>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Steps</h2>
+                                    <ol class="list-decimal list-inside space-y-3 text-gray-700">${(recipe.steps || []).map(s => `<li>${s}</li>`).join('')}</ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadRecipe);
+    </script>
+</head>
+<body class="min-h-screen tablecloth-bg">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="index.html" class="text-2xl font-bold text-gray-800 hover:text-amber-600 transition-colors">&lt; Static Chef /&gt;</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html#about" class="text-gray-700 hover:text-amber-600 transition-colors">За мен</a>
+                    <a href="menu.html" class="text-amber-600 font-semibold">Моите рецепти</a>
+                    <a href="index.html#portfolio" class="text-gray-700 hover:text-amber-600 transition-colors">Вашите рецепти</a>
+                    <a href="index.html#contact" class="text-gray-700 hover:text-amber-600 transition-colors">Контакт</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-10 px-4">
+        <div id="recipeContainer" class="max-w-6xl mx-auto"></div>
+    </main>
+</body>
+</html>
+

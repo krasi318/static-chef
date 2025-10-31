@@ -372,42 +372,42 @@
                             title: "Grandma's Apple Pie",
                             category: "Desserts",
                             image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe1.html"
+                            link: "recipe.html?id=1"
                         },
                         {
                             id: 2,
                             title: "Cozy Chicken Soup",
                             category: "Soups",
                             image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe2.html"
+                            link: "recipe.html?id=2"
                         },
                         {
                             id: 3,
                             title: "Homemade Pasta",
                             category: "Main Course",
                             image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe3.html"
+                            link: "recipe.html?id=3"
                         },
                         {
                             id: 4,
                             title: "Chocolate Chip Cookies",
                             category: "Desserts",
                             image: "https://images.unsplash.com/photo-1499636136210-6f4ee6a87fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe4.html"
+                            link: "recipe.html?id=4"
                         },
                         {
                             id: 5,
                             title: "Mediterranean Salad",
                             category: "Salads",
                             image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe5.html"
+                            link: "recipe.html?id=5"
                         },
                         {
                             id: 6,
                             title: "Beef Stew",
                             category: "Main Course",
                             image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe6.html"
+                            link: "recipe.html?id=6"
                         }
                     ];
                 }
@@ -424,7 +424,7 @@
                     
                     // Render portfolio items
                     const itemsHtml = this.portfolioItems.map(item => `
-                        <div class="portfolio-item" onclick="window.open('${item.link}', '_blank')">
+                        <div class="portfolio-item" onclick="window.location.href='${item.link}'">
                             <img src="${item.image}" alt="${item.title}" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category">${item.category}</div>

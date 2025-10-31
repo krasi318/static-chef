@@ -354,10 +354,14 @@
                         {/* Recipe Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {filteredRecipes.map((recipe) => (
-                                <div
+                                <a
                                     key={recipe.id}
-                                    className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group"
+                                    href={`recipe.html?id=${recipe.id}`}
+                                    className="block"
                                 >
+                                    <div
+                                        className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group"
+                                    >
                                     {/* Recipe Image */}
                                     <div className="relative h-48 overflow-hidden">
                                         <img
@@ -395,7 +399,8 @@
                                             </span>
                         </div>
                     </div>
-                </div>
+                                    </div>
+                                </a>
                             ))}
                         </div>
 

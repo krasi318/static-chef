@@ -1,0 +1,170 @@
+[
+  {
+    "id": 1,
+    "title": "Grandma's Apple Pie",
+    "category": "Dessert",
+    "prepTime": "45 min",
+    "image": "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "2 cups all-purpose flour",
+      "1/2 cup unsalted butter",
+      "6 apples, sliced",
+      "1/2 cup sugar",
+      "1 tsp cinnamon",
+      "1 egg (for wash)"
+    ],
+    "steps": [
+      "Preheat oven to 190°C (375°F).",
+      "Prepare crust and line the pie dish.",
+      "Mix apples with sugar and cinnamon.",
+      "Fill crust, add top layer, and seal edges.",
+      "Brush with egg wash and bake 45–50 minutes."
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Cozy Chicken Soup",
+    "category": "Soups",
+    "prepTime": "30 min",
+    "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "2 chicken breasts",
+      "2 carrots, diced",
+      "2 celery stalks, diced",
+      "1 onion, chopped",
+      "1.5 L chicken stock",
+      "Salt & pepper"
+    ],
+    "steps": [
+      "Sauté onion, carrots, celery 5–7 minutes.",
+      "Add stock and chicken; simmer 20 minutes.",
+      "Shred chicken, season to taste, and serve."
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Homemade Pasta",
+    "category": "Pasta",
+    "prepTime": "60 min",
+    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "2 cups 00 flour",
+      "3 large eggs",
+      "1 tsp olive oil",
+      "Pinch of salt"
+    ],
+    "steps": [
+      "Form a flour well; add eggs and oil.",
+      "Knead 8–10 minutes; rest 30 minutes.",
+      "Roll and cut pasta; cook 2–3 minutes."
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Chocolate Chip Cookies",
+    "category": "Dessert",
+    "prepTime": "25 min",
+    "image": "https://images.unsplash.com/photo-1499636136210-6f4ee6a87fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "2 1/4 cups flour",
+      "1 cup butter",
+      "3/4 cup sugar + 3/4 cup brown sugar",
+      "2 eggs",
+      "1 tsp vanilla",
+      "1 tsp baking soda",
+      "1.5 cups chocolate chips"
+    ],
+    "steps": [
+      "Cream butter and sugars; add eggs and vanilla.",
+      "Mix dry ingredients; fold in chips.",
+      "Scoop and bake at 175°C (350°F) for 10–12 minutes."
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Mediterranean Salad",
+    "category": "Appetizers",
+    "prepTime": "15 min",
+    "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "Tomatoes, cucumbers, red onion",
+      "Feta, olives",
+      "Olive oil, lemon, oregano",
+      "Salt & pepper"
+    ],
+    "steps": [
+      "Chop vegetables; crumble feta.",
+      "Whisk dressing; toss and serve."
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Beef Stew",
+    "category": "Soups",
+    "prepTime": "90 min",
+    "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "800 g beef chuck",
+      "2 potatoes, cubed",
+      "2 carrots, sliced",
+      "1 onion, chopped",
+      "2 cups beef stock",
+      "2 tbsp tomato paste"
+    ],
+    "steps": [
+      "Brown beef; add vegetables and paste.",
+      "Pour stock; simmer 60–75 minutes until tender."
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Turkey Sandwich",
+    "category": "Sandwiches",
+    "prepTime": "10 min",
+    "image": "https://images.unsplash.com/photo-1539252554453-80ab65ce3586?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "Sliced turkey",
+      "Bread",
+      "Lettuce, tomato",
+      "Mustard or mayo"
+    ],
+    "steps": [
+      "Toast bread; layer ingredients.",
+      "Slice and serve."
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Roasted Turkey",
+    "category": "Thanksgiving",
+    "prepTime": "180 min",
+    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "Whole turkey",
+      "Butter, herbs",
+      "Salt & pepper"
+    ],
+    "steps": [
+      "Season turkey; roast until internal temp 74°C (165°F).",
+      "Rest 20 minutes before carving."
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Spaghetti Carbonara",
+    "category": "Pasta",
+    "prepTime": "35 min",
+    "image": "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "ingredients": [
+      "Spaghetti",
+      "Guanciale or pancetta",
+      "Eggs, pecorino",
+      "Black pepper"
+    ],
+    "steps": [
+      "Cook pasta; crisp guanciale.",
+      "Toss with eggs and cheese off heat; season."
+    ]
+  }
+]
+

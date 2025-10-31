@@ -246,6 +246,7 @@
             noResults.classList.add('hidden');
             
             recipeGrid.innerHTML = filteredRecipes.map(recipe => `
+                <a href="recipe.html?id=${recipe.id}" class="block">
                 <div class="recipe-card bg-white rounded-2xl shadow-lg overflow-hidden group">
                     <!-- Recipe Image -->
                     <div class="relative h-48 overflow-hidden">
@@ -285,6 +286,7 @@
                         </div>
                     </div>
                 </div>
+                </a>
             `).join('');
         }
 
