@@ -257,10 +257,10 @@ require_once __DIR__ . '/db.php';
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#about">За мен</a></li>
-                        <li class="nav-item"><a class="nav-link" href="./menu.html">Моите рецепти</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#portfolio">Вашите рецепти</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contact">Контакт</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.php#about">За мен</a></li>
+                        <li class="nav-item"><a class="nav-link" href="menu.php">Моите рецепти</a></li>
+                        <li class="nav-item"><a class="nav-link" href="community.php">Вашите рецепти</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact.php">Контакт</a></li>
                     </ul>
                 </div>
             </div>
@@ -274,7 +274,7 @@ require_once __DIR__ . '/db.php';
                         <hr class="divider" />
                     </div>
                     <div class="col-lg-8 align-self-baseline">
-                        <a class="btn btn-primary btn-xl" href="#about">Към рецептите</a>
+                        <a class="btn btn-primary btn-xl" href="menu.php">Към рецептите</a>
                     </div>
                 </div>
             </div>
@@ -292,37 +292,7 @@ require_once __DIR__ . '/db.php';
                 </div>
             </div>
         </section> -->
-        <!-- About Me-->
-        <section class="page-section" id="about">
-            <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="col-lg-6">
-                        <h1 class="display-4 fw-bold text-primary mb-4">На кратко</h1>
-                        <p class="lead mb-4">
-                            Hi there! I'm Krasi, a passionate home cook who believes that food brings people together. 
-                            My culinary journey started in my grandmother's kitchen, where I learned that the best recipes 
-                            are passed down through generations and made with love.
-                        </p>
-                        <p class="mb-4">
-                            I love experimenting with traditional recipes, adding my own twist to create something unique. 
-                            From hearty comfort foods to light, fresh dishes, I believe every meal should tell a story. 
-                            Join me as I share my favorite recipes, cooking tips, and the stories behind each dish.
-                        </p>
-                        <p class="mb-0">
-                            When I'm not cooking, you'll find me exploring local markets, reading cookbooks, or planning 
-                            my next culinary adventure. Food is my passion, my art, and my way of connecting with the world.
-                        </p>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="about-image-container">
-                            <img src="assets/img/tabletop.png" 
-                                 alt="Krasi in the kitchen" 
-                                 class="img-fluid rounded-3 shadow-lg about-image">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    
         <!-- Portfolio Carousel-->
         <section class="page-section bg-light" id="portfolio">
             <div class="container px-4 px-lg-6">
@@ -364,55 +334,28 @@ require_once __DIR__ . '/db.php';
                     this.currentIndex = 0;
                     this.itemsPerView = 3;
                     this.maxIndex = 0;
-                    this.portfolioItems = this.getPortfolioItems();
-                    this.init();
+                    this.portfolioItems = [];
+                    this.loadItems();
                 }
 
-                getPortfolioItems() {
-                    return [
-                        {
-                            id: 1,
-                            title: "Grandma's Apple Pie",
-                            category: "Desserts",
-                            image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe.html?id=1"
-                        },
-                        {
-                            id: 2,
-                            title: "Cozy Chicken Soup",
-                            category: "Soups",
-                            image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe.html?id=2"
-                        },
-                        {
-                            id: 3,
-                            title: "Homemade Pasta",
-                            category: "Main Course",
-                            image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe.html?id=3"
-                        },
-                        {
-                            id: 4,
-                            title: "Chocolate Chip Cookies",
-                            category: "Desserts",
-                            image: "https://images.unsplash.com/photo-1499636136210-6f4ee6a87fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe.html?id=4"
-                        },
-                        {
-                            id: 5,
-                            title: "Mediterranean Salad",
-                            category: "Salads",
-                            image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe.html?id=5"
-                        },
-                        {
-                            id: 6,
-                            title: "Beef Stew",
-                            category: "Main Course",
-                            image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                            link: "recipe.html?id=6"
-                        }
-                    ];
+                async loadItems() {
+                    try {
+                        const response = await fetch('get_recipes.php', { headers: { 'Accept': 'application/json' } });
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        const data = await response.json();
+                        // Normalize data to expected shape for rendering
+                        this.portfolioItems = (Array.isArray(data) ? data : []).map(item => ({
+                            id: item.id,
+                            title: item.title,
+                            category: 'Recipe',
+                            image_path: item.image_path,
+                            link: item.link
+                        }));
+                    } catch (e) {
+                        this.portfolioItems = [];
+                    } finally {
+                        this.init();
+                    }
                 }
 
                 init() {
@@ -428,7 +371,7 @@ require_once __DIR__ . '/db.php';
                     // Render portfolio items
                     const itemsHtml = this.portfolioItems.map(item => `
                         <div class="portfolio-item" onclick="window.location.href='${item.link}'">
-                            <img src="${item.image}" alt="${item.title}" />
+                            <img src="${item.image_path}" alt="${item.title}" />
                             <div class="portfolio-box-caption">
                                 <div class="project-category">${item.category}</div>
                                 <div class="project-name">${item.title}</div>
@@ -438,9 +381,8 @@ require_once __DIR__ . '/db.php';
 
                     // Add "Show All" item
                     const showAllHtml = `
-                        <div class="show-all-item" onclick="window.open('all-recipes.html', '_blank')">
+                        <div class="show-all-item" onclick="window.open('menu.php', '_self')">
                             <div class="show-all-content">
-                                <div class="show-all-icon">🍽️</div>
                                 <div class="show-all-text">Show All Recipes</div>
                             </div>
                         </div>
