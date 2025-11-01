@@ -16,7 +16,6 @@
             <div class="flex justify-between items-center py-4">
                 <a href="index.php" class="text-2xl font-bold text-gray-800 hover:text-amber-600 transition-colors">&lt; Static Chef /&gt;</a>
                 <div class="hidden md:flex space-x-8">
-                    <a href="index.php#about" class="text-gray-700 hover:text-amber-600 transition-colors">За мен</a>
                     <a href="menu.php" class="text-gray-700 hover:text-amber-600 transition-colors">Моите рецепти</a>
                     <a href="community.php" class="text-amber-600 font-semibold">Вашите рецепти</a>
                     <a href="contact.php" class="text-gray-700 hover:text-amber-600 transition-colors">Контакт</a>

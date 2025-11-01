@@ -56,7 +56,6 @@
                     &lt; Static Chef /&gt;
                 </a>
                 <div class="hidden md:flex space-x-8">
-                    <a href="index.php#about" class="text-gray-700 hover:text-amber-600 transition-colors">За мен</a>
                     <a href="menu.php" class="text-amber-600 font-semibold">Моите рецепти</a>
                     <a href="community.php" class="text-gray-700 hover:text-amber-600 transition-colors">Вашите рецепти</a>
                     <a href="contact.php" class="text-gray-700 hover:text-amber-600 transition-colors">Контакт</a>
@@ -87,6 +86,17 @@
             const [searchQuery, setSearchQuery] = useState('');
             const [recipes, setRecipes] = useState([]);
 
+            // Map Bulgarian category names to English protein filter values
+            const categoryMap = useMemo(() => ({
+                'Всички': 'all',
+                'Пиле': 'chicken',
+                'Телешко': 'beef',
+                'Свинско': 'pork',
+                'Зеленчуци': 'vegetarian'
+            }), []);
+
+            const categories = useMemo(() => ['Всички', 'Пиле', 'Телешко', 'Свинско', 'Зеленчуци'], []);
+
             const fetchRecipes = async (proteinFilter) => {
                 const params = new URLSearchParams();
                 params.set('limit', 'all');
@@ -112,8 +122,6 @@
                 fetchRecipes(protein);
             }, [protein]);
 
-            const categories = useMemo(() => ['Всички', 'Пиле', 'Телешко', 'Свинско', 'Зеленчуци'], []);
-
             // Filter recipes based on search query (server handles protein)
             const filteredRecipes = useMemo(() => {
                 return recipes.filter(recipe => {
@@ -138,19 +146,23 @@
 
                         {/* Protein Filter */}
                         <div className="flex flex-wrap justify-center gap-2 mb-8">
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setProtein(cat)}
-                                    className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
-                                        protein === cat
-                                            ? 'bg-amber-600 text-white shadow-lg'
-                                            : 'bg-white text-gray-700 hover:bg-amber-50 border border-gray-200'
-                                    }`}
-                                >
-                                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                                </button>
-                            ))}
+                            {categories.map((cat) => {
+                                const proteinValue = categoryMap[cat];
+                                const isActive = protein === proteinValue;
+                                return (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setProtein(proteinValue)}
+                                        className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
+                                            isActive
+                                                ? 'bg-amber-600 text-white shadow-lg'
+                                                : 'bg-white text-gray-700 hover:bg-amber-50 border border-gray-200'
+                                        }`}
+                                    >
+                                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                                    </button>
+                                );
+                            })}
                         </div>
 
                         {/* Search Bar */}

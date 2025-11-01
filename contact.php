@@ -16,7 +16,6 @@ require_once __DIR__ . '/db.php';
             <div class="flex justify-between items-center py-4">
                 <a href="index.php" class="text-2xl font-bold text-gray-800 hover:text-amber-600 transition-colors">&lt; Static Chef /&gt;</a>
                 <div class="hidden md:flex space-x-8">
-                    <a href="index.php#about" class="text-gray-700 hover:text-amber-600 transition-colors">За мен</a>
                     <a href="menu.php" class="text-gray-700 hover:text-amber-600 transition-colors">Моите рецепти</a>
                     <a href="community.php" class="text-gray-700 hover:text-amber-600 transition-colors">Вашите рецепти</a>
                     <a href="contact.php" class="text-amber-600 font-semibold">Контакт</a>
@@ -36,7 +35,6 @@ require_once __DIR__ . '/db.php';
 
                 <!-- Contact Section -->
                 <div class="pt-4">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">Контакти</h2>
                     <div class="space-y-4">
                         <!-- Website -->
                         <a href="https://www.krasetoo.me" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center md:justify-start gap-4 p-4 bg-gray-50 hover:bg-amber-50 rounded-xl transition-all duration-300 group">

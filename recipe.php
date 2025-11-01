@@ -7,6 +7,7 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $recipe = null;
 $ingredients = [];
 $images = [];
+$steps = [];
 
 if ($id > 0) {
     // Fetch recipe
@@ -49,6 +50,18 @@ if ($id > 0) {
             }
             $stmtImg->close();
         }
+
+        // Steps
+        $stmtSteps = $conn->prepare('SELECT step_number, description FROM recipe_steps WHERE recipe_id = ? ORDER BY step_number ASC');
+        if ($stmtSteps) {
+            $stmtSteps->bind_param('i', $id);
+            $stmtSteps->execute();
+            $resSteps = $stmtSteps->get_result();
+            while ($row = $resSteps->fetch_assoc()) {
+                $steps[] = $row;
+            }
+            $stmtSteps->close();
+        }
     }
 }
 ?>
@@ -67,7 +80,6 @@ if ($id > 0) {
             <div class="flex justify-between items-center py-4">
                 <a href="index.php" class="text-2xl font-bold text-gray-800 hover:text-amber-600 transition-colors">&lt; Static Chef /&gt;</a>
                 <div class="hidden md:flex space-x-8">
-                    <a href="index.php#about" class="text-gray-700 hover:text-amber-600 transition-colors">За мен</a>
                     <a href="menu.php" class="text-amber-600 font-semibold">Моите рецепти</a>
                     <a href="community.php" class="text-gray-700 hover:text-amber-600 transition-colors">Вашите рецепти</a>
                     <a href="contact.php" class="text-gray-700 hover:text-amber-600 transition-colors">Контакт</a>
@@ -113,9 +125,15 @@ if ($id > 0) {
                                 </ul>
                             </div>
                             <div>
-                                <h2 class="text-2xl font-bold text-gray-800 mb-4">Стъпки</h2>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4"> Стъпки</h2>
                                 <ol class="list-decimal list-inside space-y-3 text-gray-700">
+<?php if (!empty($steps)): ?>
+<?php foreach ($steps as $s): ?>
+                                    <li><?php echo htmlspecialchars($s['description']); ?></li>
+<?php endforeach; ?>
+<?php else: ?>
                                     <li>Enjoy your meal!</li>
+<?php endif; ?>
                                 </ol>
                             </div>
                         </div>

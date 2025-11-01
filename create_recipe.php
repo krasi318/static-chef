@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = isset($_POST['description']) ? trim($_POST['description']) : '';
     $ingredientsRaw = isset($_POST['ingredients']) ? $_POST['ingredients'] : '';
     $quantitiesMap = isset($_POST['quantities']) && is_array($_POST['quantities']) ? $_POST['quantities'] : [];
+    $stepsRaw = isset($_POST['steps']) ? trim($_POST['steps']) : '';
 
     if ($title === '') {
         $errorMessage = 'Title is required';
@@ -25,6 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ingredientsList = array_filter(array_unique(array_map(function ($v) {
             return trim($v);
         }, explode(',', $ingredientsRaw))), function ($v) {
+            return $v !== '';
+        });
+
+        // Normalize steps: split by newline, trim, remove empties
+        $stepsList = array_filter(array_map('trim', explode("\n", $stepsRaw)), function ($v) {
             return $v !== '';
         });
 
@@ -109,6 +115,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmtInsertImage->close();
             }
 
+            // Insert steps
+            if (!empty($stepsList)) {
+                $stmtStep = $conn->prepare('INSERT INTO recipe_steps (recipe_id, step_number, description) VALUES (?, ?, ?)');
+                if (!$stmtStep) { throw new Exception('Failed to prepare recipe_steps insert'); }
+                foreach ($stepsList as $index => $stepText) {
+                    $stepNumber = $index + 1;
+                    $stmtStep->bind_param('iis', $recipeId, $stepNumber, $stepText);
+                    if (!$stmtStep->execute()) { throw new Exception('Failed to execute recipe_steps insert'); }
+                }
+                $stmtStep->close();
+            }
+
             $conn->commit();
             $successMessage = '✅ Recipe added successfully!';
         } catch (Throwable $e) {
@@ -159,6 +177,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="ingredients" class="form-label">Ingredients (comma-separated)</label>
                     <input type="text" class="form-control" id="ingredients" name="ingredients" placeholder="e.g., beans,corn,beef">
                     <div id="quantitiesContainer" class="mt-3"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="steps" class="form-label">Steps (write each step on a new line)</label>
+                    <textarea class="form-control" id="steps" name="steps" rows="8" placeholder="Boil water.&#10;Add pasta.&#10;Stir for 10 minutes.&#10;Drain and serve."></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="images">Images</label>
